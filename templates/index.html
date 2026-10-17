@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>PhishGuard – Cyber Phishing Detector</title>
+<style>
+:root{--g:#cbd5e1;--b:#cbd5e1;--gr:203,213,225;--glow:#27272c;--ok:#22c55e;--bg:#0b0b0d;--panel:#141417;--line:#2c2c32;--ink:#ececf0;--mut:#8a8a94;--bad:#ff3b5c;--grad:linear-gradient(90deg,var(--g),var(--b));box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;background:linear-gradient(rgba(var(--gr),.05) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--gr),.05) 1px,transparent 1px),radial-gradient(circle at 80% 0%,var(--glow),transparent 45%),var(--bg);background-size:34px 34px,34px 34px,auto,auto;background-attachment:fixed}
+[hidden]{display:none!important}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:#0a0a0ccc;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:8px}
+.logo{font-weight:800;font-size:18px;color:var(--g);text-shadow:0 0 12px rgba(var(--gr),.55);margin-bottom:10px}.logo span{color:var(--b)}
+.menu{background:transparent;border:1px solid transparent;color:var(--mut);text-align:left;padding:10px 12px;border-radius:6px;cursor:pointer;font:inherit}
+.menu.on{color:var(--g);border-color:var(--line);background:rgba(var(--gr),.08)}
+.stat{font-size:12px;color:var(--mut);margin-top:auto}.stat i{color:var(--g);font-style:normal}
+@media(max-width:800px){.shell{grid-template-columns:1fr}aside{flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--line)}.logo{margin:0 10px 0 0}.stat{margin:0 0 0 auto}}
+.content{padding:28px 32px;max-width:1400px;width:100%;margin:0 auto}
+.panel{position:relative;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:22px;box-shadow:0 0 30px rgba(var(--gr),.08)}
+.panel::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--grad)}
+h2{margin:0 0 14px;font-size:15px;letter-spacing:2px;color:var(--b)}h2::before{content:"// ";color:var(--g)}
+textarea,input{width:100%;background:#08080a;color:var(--g);border:1px solid var(--line);border-radius:6px;padding:12px;font:inherit;outline:0}
+textarea{height:260px;resize:vertical}textarea:focus,input:focus{border-color:var(--g);box-shadow:0 0 12px rgba(var(--gr),.27)}input{margin-top:8px}::placeholder{color:#62626b}
+.btn{background:var(--grad);color:#0a0a0c;border:0;border-radius:6px;padding:11px 22px;font:inherit;font-weight:800;cursor:pointer;margin-top:12px;box-shadow:0 0 18px rgba(var(--gr),.33);letter-spacing:.5px}
+.btn.ghost{background:transparent;color:var(--g);border:1px solid var(--g);box-shadow:none;padding:8px 14px}
+.badge{display:inline-block;padding:6px 14px;border-radius:4px;font-weight:800;letter-spacing:1px;border:1px solid}
+.safe{color:var(--ok);border-color:var(--ok);background:rgba(34,197,94,.08);box-shadow:0 0 14px rgba(34,197,94,.27)}.phish{color:var(--bad);border-color:var(--bad);background:#ff3b5c14;box-shadow:0 0 14px #ff3b5c44}
+.bar{height:8px;background:#1e1e23;border-radius:4px;margin:12px 0;overflow:hidden}.bar i{display:block;height:100%}
+ul{padding-left:18px;margin:6px 0;color:var(--mut)}small{color:var(--mut)}
+.acc{font-size:46px;font-weight:800;color:var(--g);text-shadow:0 0 18px rgba(var(--gr),.55)}
+table{border-collapse:separate;border-spacing:6px;width:100%;text-align:center}td,th{padding:14px 6px;font-size:12px;border-radius:4px}th{color:var(--mut);font-weight:600}
+.g{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.4);color:var(--ok);font-weight:800;font-size:20px}.r{background:#ff3b5c14;border:1px solid #ff3b5c66;color:var(--bad);font-weight:800;font-size:20px}
+.hero{border:1px solid var(--line);background:linear-gradient(120deg,rgba(var(--gr),.12),transparent 70%),var(--panel);border-radius:6px;padding:20px 22px;margin-bottom:18px;display:grid;gap:14px}
+.hero h1{margin:0;font-size:22px;letter-spacing:1px;color:var(--g);text-shadow:0 0 14px rgba(var(--gr),.4)}.hero p{margin:4px 0 0;color:var(--mut)}
+.steps{display:flex;gap:10px;flex-wrap:wrap}.steps span{border:1px solid var(--line);border-radius:99px;padding:5px 14px;font-size:12px}.steps b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--g);color:#0a0a0c;margin-right:6px;font-size:11px}
+.tip{border-left:3px solid var(--g);padding:6px 12px;background:rgba(var(--gr),.06);font-size:13px;min-height:36px}
+</style></head><body>
+<div id="login" style="min-height:100vh;display:grid;place-items:center;padding:16px"><div class="panel" style="width:100%;max-width:380px"><div class="logo" style="font-size:24px">PHISH<span>GUARD</span></div><h2>ACCESS TERMINAL</h2><small>Demo login: admin / admin123</small><input id="u" placeholder="> username"><input id="p" type="password" placeholder="> password" onkeydown="if(event.key==='Enter')login()"><button class="btn" style="width:100%" onclick="login()">AUTHENTICATE</button><div id="err" style="color:var(--bad);margin-top:10px"></div></div></div>
+<div id="app" class="shell" hidden>
+<aside><div class="logo">PHISH<span>GUARD</span></div>
+<button class="menu on" id="m-email" onclick="tab('email')">▸ Email Scanner</button>
+<button class="menu" id="m-url" onclick="tab('url')">▸ URL Scanner</button>
+<button class="menu" id="m-model" onclick="tab('model')">▸ Model Report</button>
+<div class="stat"><i>●</i> SYSTEM ONLINE<br><button class="btn ghost" style="margin-top:12px" onclick="logout()">LOGOUT</button></div></aside>
+<div class="content">
+<div class="hero"><div><h1>PHISHING DETECTION CENTER</h1><p>Scan suspicious emails and links before they scan you.</p></div><div class="steps"><span><b>1</b>Paste</span><span><b>2</b>Analyze</span><span><b>3</b>Get verdict</span></div><div class="tip" id="tip"></div></div>
+<section class="panel" id="p-email"><h2>EMAIL SCANNER</h2>
+<textarea id="t" placeholder="> paste the email text here…"></textarea>
+<button class="btn" onclick="analyze()">ANALYZE EMAIL</button>
+<div id="res" style="margin-top:16px"></div></section>
+<section class="panel" id="p-url" hidden><h2>URL SCANNER – FAKE OR REAL?</h2>
+<input id="url" placeholder="> paste a URL, e.g. http://192.168.1.5/secure-login">
+<button class="btn" onclick="checkUrl()">CHECK URL</button>
+<div id="ures" style="margin-top:16px"></div></section>
+<section class="panel" id="p-model" hidden><h2>MODEL REPORT</h2>
+<div class="acc" id="acc">–</div><small>Accuracy on test data</small>
+<h2 style="margin-top:20px">CONFUSION MATRIX</h2>
+<table><tr><th></th><th>Pred: Safe</th><th>Pred: Phishing</th></tr>
+<tr><th>Actual: Safe</th><td class="g" id="c00">–</td><td class="r" id="c01">–</td></tr>
+<tr><th>Actual: Phishing</th><td class="r" id="c10">–</td><td class="g" id="c11">–</td></tr></table>
+<small id="note"></small></section>
+</div></div>
+<script>
+const $=i=>document.getElementById(i),KW=["urgent","verify","password","account","suspended","click here","login","bank","confirm","winner","free","limited time","security alert","update"];
+const OK="linear-gradient(90deg,#16a34a,#4ade80)",NO="#ff3b5c";
+function tab(n){["email","url","model"].forEach(x=>{$("p-"+x).hidden=x!==n;$("m-"+x).classList.toggle("on",x===n)})}
+function local(t){const l=t.toLowerCase(),u=l.match(/https?:\/\/\S+/g)||[],ip=u.filter(x=>/\/\/\d+\.\d+\.\d+\.\d+/.test(x)).length,k=KW.filter(x=>l.includes(x)).length,e=(t.match(/!/g)||[]).length;
+let s=Math.min(.99,k*.16+u.length*.12+ip*.35+Math.min(e,3)*.05),p=s>=.4;return{label:p?"Phishing":"Safe",confidence:Math.round((p?s:1-s)*100),urls:u.length,ip_urls:ip,keywords:k,exclamations:e}}
+async function analyze(){const t=$("t").value.trim();if(!t)return;let r;
+try{const x=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:t})});if(!x.ok)throw 0;r=await x.json()}catch(e){r=local(t)}
+const p=r.label==="Phishing";$("res").innerHTML=`<span class="badge ${p?"phish":"safe"}">${p?"⚠ PHISHING EMAIL":"✓ SAFE EMAIL"}</span> <small>Confidence ${r.confidence}%</small>
+<div class="bar"><i style="width:${r.confidence}%;background:${p?NO:OK}"></i></div>
+<ul><li>URLs found: ${r.urls}</li><li>IP-based URLs: ${r.ip_urls}</li><li>Suspicious keywords: ${r.keywords}</li><li>Exclamation marks: ${r.exclamations}</li></ul>`}
+async function metrics(){let m,d=0;try{const x=await fetch("/metrics");if(!x.ok)throw 0;m=await x.json()}catch(e){m={accuracy:97.2,cm:[[1480,32],[41,1450]]};d=1}
+$("acc").textContent=m.accuracy+"%";[[0,0],[0,1],[1,0],[1,1]].forEach(([a,b])=>$("c"+a+b).textContent=m.cm[a][b]);
+$("note").textContent=d?"Demo values – run the Flask backend to see real results.":""}
+let A=false;try{A=sessionStorage.getItem("auth")==="1"}catch(e){}
+function gate(){$("login").hidden=A;$("app").hidden=!A}
+function login(){if($("u").value.trim()==="admin"&&$("p").value==="admin123"){A=true;try{sessionStorage.setItem("auth","1")}catch(e){}$("err").textContent="";gate()}else $("err").textContent="Invalid username or password"}
+function logout(){A=false;try{sessionStorage.removeItem("auth")}catch(e){}$("p").value="";gate()}
+function checkUrl(){const v=$("url").value.trim();if(!v)return;let u,s=0,r=[];const add=(w,m)=>{s+=w;r.push(m)};
+try{u=new URL(/^[a-z]+:\/\//i.test(v)?v:"https://"+v)}catch(e){$("ures").innerHTML='<span class="badge phish">INVALID URL</span>';return}
+const h=u.hostname.toLowerCase();
+if(u.protocol!=="https:")add(1,"Not using HTTPS");
+if(/^\d+\.\d+\.\d+\.\d+$/.test(h))add(3,"IP address used instead of a domain name");
+if(v.includes("@"))add(2,"Contains @ symbol");
+if(v.length>75)add(1,"Very long URL");
+if(h.split(".").length>4)add(1,"Too many subdomains");
+if(h.replace(/\.[^.]+$/,"").includes("-"))add(1,"Hyphen in domain name");
+if(h.includes("xn--"))add(2,"Punycode (look-alike characters)");
+if(/(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl)$/.test(h))add(2,"URL shortener hides the real destination");
+if(/\.(xyz|top|tk|ml|ga|cf|click|zip)$/.test(h))add(2,"Suspicious top-level domain");
+const k=["login","verify","secure","update","account","bank","confirm","password"].filter(x=>(h+u.pathname).includes(x));if(k.length)add(Math.min(k.length,2),"Suspicious words: "+k.join(", "));
+const f=s>=2,c=f?["phish","✗ FAKE"]:["safe","✓ REAL"];
+$("ures").innerHTML=`<span class="badge ${c[0]}">${c[1]}</span> <small>Risk score ${s}</small><div class="bar"><i style="width:${Math.min(100,s*15)}%;background:${f?NO:OK}"></i></div><ul>${r.length?r.map(x=>"<li>"+x+"</li>").join(""):"<li>No risky patterns found</li>"}</ul>`}
+const TIPS=["Never click links in unexpected emails.","Check the sender address, not just the display name.","Banks never ask for your password by email.","Hover over a link to see its real destination.","Urgent threats like account suspended are a classic phishing trick."];let ti=0;function tip(){$("tip").textContent="💡 Tip: "+TIPS[ti++%TIPS.length]}tip();setInterval(tip,5000);
+gate();metrics();
+</script></body></html>
